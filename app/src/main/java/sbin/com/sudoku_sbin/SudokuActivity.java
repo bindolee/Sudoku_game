@@ -48,6 +48,7 @@ public class SudokuActivity extends AppCompatActivity
         int item = v.getId();
         switch (item){
             case R.id.continue_button:
+                startGame(GameActivity.DIFFICULTY_CONTINUE);
                 break;
             case R.id.new_button:
                 openNewGameDialog();
@@ -104,6 +105,18 @@ public class SudokuActivity extends AppCompatActivity
                 break;
         }
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Music.play(this,R.raw.main);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Music.stop(this);
     }
 
     /*@Override

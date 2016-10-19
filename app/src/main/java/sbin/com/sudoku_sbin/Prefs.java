@@ -1,7 +1,10 @@
 package sbin.com.sudoku_sbin;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatCallback;
 import android.support.v7.app.AppCompatDelegate;
@@ -16,6 +19,12 @@ public class Prefs extends PreferenceActivity
         implements AppCompatCallback {
 
     private AppCompatDelegate delegate;
+
+    // Option names and default values
+    private static final String KEY_MUSIC = "music";
+    private static final boolean OPT_MUSIC_DEF = true;
+    private static final String KEY_HINTS = "hints";
+    private static final boolean OPT_HINTS_DEF = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +48,15 @@ public class Prefs extends PreferenceActivity
 
     }
 
+    public static boolean getMusic(Context context){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(KEY_MUSIC, OPT_MUSIC_DEF);
+    }
+
+    public static boolean getHints(Context context){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(KEY_HINTS, OPT_HINTS_DEF);
+    }
 
     @Override
     public void onSupportActionModeStarted(ActionMode mode) {

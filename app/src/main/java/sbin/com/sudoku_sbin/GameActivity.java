@@ -1,6 +1,7 @@
 package sbin.com.sudoku_sbin;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,9 @@ public class GameActivity extends AppCompatActivity {
     public static final int DIFFICULTY_EASY = 0;
     public static final int DIFFICULTY_MEDIUM = 1;
     public static final int DIFFICULTY_HARD = 2;
+
+    private static final String PREF_PUZZLE = "puzzle" ;
+    protected static final int DIFFICULTY_CONTINUE = -1;
 
     private int puzzle[];
     private PuzzleView puzzleView;
@@ -50,6 +54,10 @@ public class GameActivity extends AppCompatActivity {
         setContentView(puzzleView);
         puzzleView.requestFocus();
 
+        // ...
+        // If the activity is restarted, do a continue next time
+        getIntent().putExtra(KEY_DIFFICULTY, DIFFICULTY_CONTINUE);
+
     }
 
     private int[] getPuzzle(int difficulty) {
@@ -57,6 +65,9 @@ public class GameActivity extends AppCompatActivity {
 
         // TODO: Continue last game
         switch (difficulty) {
+            case DIFFICULTY_CONTINUE:
+                puz = getPreferences(MODE_PRIVATE).getString(PREF_PUZZLE, easyPuzzle);
+                break;
             case DIFFICULTY_HARD:
                 puz = hardPuzzle;
                 break;
@@ -201,5 +212,21 @@ public class GameActivity extends AppCompatActivity {
                 c1[nused++] = t;
         }
         return c1;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Music.play(this,R.raw.game);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Music.stop(this);
+
+        //Save data for future continue.
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        preferences.edit().putString(PREF_PUZZLE, toPuzzleString(puzzle)).commit();
     }
 }

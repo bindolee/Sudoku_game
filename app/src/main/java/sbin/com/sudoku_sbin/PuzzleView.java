@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -15,6 +17,11 @@ import android.view.animation.AnimationUtils;
 
 public class PuzzleView extends View{
 
+    private static final String SELX = "selX";
+    private static final String SELY = "selY";
+    private static final String VIEW_STATE = "viewState";
+    private static final int ID = 42;
+
     private static final String LOG_TAG = "PuzzleView";
     private final GameActivity game;
 
@@ -24,11 +31,36 @@ public class PuzzleView extends View{
     private int selY;       // Y index of selection
     private final Rect selRect = new Rect();
 
+
+    /* if you change the screen orientation while sudoku is running. You will notice that it forgets where its cursor is.
+    ** that's because we use a custom puzzleview view. Normal android views save their view state automatically, but since
+    ** we made our own, we don't get that free. Unlike persistent state, instance state is not permanent. It lives in a bundle
+    ** class on Android's application stack. Instance state is intended to be used for small bits of information such as cursor positions.
+     */
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable p = super.onSaveInstanceState();
+        Bundle args = new Bundle();
+        args.putInt(SELX, selX);
+        args.putInt(SELY, selY);
+        args.putParcelable(VIEW_STATE, p);
+        return args;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Bundle args = new Bundle();
+        select(args.getInt(SELX), args.getInt(SELY));
+        super.onRestoreInstanceState(args.getParcelable(VIEW_STATE));
+    }
+
     public PuzzleView(Context context) {
         super(context);
         this.game = (GameActivity) context;
         setFocusable(true);
         setFocusableInTouchMode(true);
+
+        setId(ID);
     }
 
     @Override
@@ -37,7 +69,10 @@ public class PuzzleView extends View{
         drawGridLines(canvas);
         drawNumbers(canvas);
         drawSelection(canvas);
-        drawHints(canvas);
+
+        if (Prefs.getMusic(getContext())) {
+            drawHints(canvas);
+        }
     }
 
     private void drawHints(Canvas canvas) {
