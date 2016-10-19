@@ -1,15 +1,20 @@
 package sbin.com.sudoku_sbin;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 public class SudokuActivity extends AppCompatActivity
         implements View.OnClickListener {
+
+    private static String LOG_TAG = "SudokuAcitivity";
 
     private static int ABOUT_ACTIVITY_REQ_CODE  = 100;
     private static int SUDOKU_MENU_REQ_CODE     = 101;
@@ -45,6 +50,7 @@ public class SudokuActivity extends AppCompatActivity
             case R.id.continue_button:
                 break;
             case R.id.new_button:
+                openNewGameDialog();
                 break;
             case R.id.about_button:
                 Intent intent = new Intent(this, AboutActivity.class);
@@ -56,6 +62,26 @@ public class SudokuActivity extends AppCompatActivity
             default:
                 break;
         }
+    }
+
+    private void openNewGameDialog() {
+        AlertDialog dialog =
+                new AlertDialog.Builder(this)
+                    .setTitle(R.string.new_game_title)
+                    .setItems(R.array.difficulty, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startGame(which);
+                        }
+                    }).show();
+
+    }
+
+    private void startGame(int level) {
+        Log.i(LOG_TAG,"Start new Game clicked...");
+        Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra(GameActivity.KEY_DIFFICULTY, level);
+        startActivity(intent);
     }
 
     @Override

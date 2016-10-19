@@ -24,11 +24,16 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="sbin.com.sudoku_sbin.SudokuActivity" />
+                android:value="sbin.com.sudoku_sbin.SudokuActivity"
+                />
         </activity>
 
         <activity android:name=".AboutActivity"
             android:theme="@android:style/Theme.Dialog"
+            />
+
+        <activity android:name=".GameActivity"
+            android:label="@string/game_title"
             />
 
     </application>
