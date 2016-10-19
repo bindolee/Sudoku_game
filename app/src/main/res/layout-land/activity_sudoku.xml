@@ -1,47 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
- ! Excerpted from "Hello, Android",
- ! published by The Pragmatic Bookshelf.
- ! Copyrights apply to this code. It may not be used to create training material,
- ! courses, books, articles, and the like. Contact us if you are in doubt.
- ! We make no guarantees that this code is fit for any purpose.
- ! Visit http://www.pragmaticprogrammer.com/titles/eband3 for more book information.
--->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackgroud"
-    android:gravity="center"
-    android:padding="35dip">
-    <TextView
-        android:text="@string/main_title"
+    android:fitsSystemWindows="true"
+    tools:context="sbin.com.sudoku_sbin.SudokuActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dip"
-        android:textSize="24.5sp" />
-    <TableLayout
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:stretchColumns="*">
-        <TableRow>
-            <Button
-                android:id="@+id/continue_button"
-                android:text="@string/continue_label" />
-            <Button
-                android:id="@+id/new_button"
-                android:text="@string/new_game_label" />
-        </TableRow>
-        <TableRow>
-            <Button
-                android:id="@+id/about_button"
-                android:text="@string/about_label" />
-            <Button
-                android:id="@+id/exit_button"
-                android:text="@string/exit_label" />
-        </TableRow>
-    </TableLayout>
-</LinearLayout>
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/contents_sudoku" />
+
+
+</android.support.design.widget.CoordinatorLayout>
