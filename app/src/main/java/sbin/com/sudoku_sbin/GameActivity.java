@@ -120,16 +120,25 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /** Open the keypad if there are any valid moves */
-    protected void showKeypadOrError(int x, int y) {
+    protected void showKeypadOrError(int x, int y, boolean bSupport) {
+        Log.d(LOG_TAG, "GameActivity::showKeypad: x: " + x +", y: "+y);
         int tiles[] = getUsedTiles(x, y);
         if (tiles.length == 9) {
+            Log.d(LOG_TAG, "GameActivity::showKeypad: length == 9" + toPuzzleString(tiles));
             Toast toast = Toast.makeText(this,
                     R.string.no_moves_label, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         } else {
-            Log.d(LOG_TAG, "showKeypad: used=" + toPuzzleString(tiles));
-            Dialog v = new Keypad(this, tiles, puzzleView);
+            Dialog v;
+            // Shows all the key pad 1-9 without AI support
+            if (!bSupport){
+                v = new Keypad(this, tiles, puzzleView, false);
+                v.show();
+                return;
+            }
+            Log.d(LOG_TAG, "GameActivity::showKeypad: keypad invoke=" + toPuzzleString(tiles));
+            v = new Keypad(this, tiles, puzzleView, true);
             v.show();
         }
     }

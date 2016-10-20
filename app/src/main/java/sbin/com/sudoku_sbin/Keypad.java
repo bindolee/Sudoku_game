@@ -3,6 +3,7 @@ package sbin.com.sudoku_sbin;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -12,17 +13,19 @@ import android.view.View;
 
 public class Keypad extends Dialog {
 
-    protected static final String LOG_TAGE = "Keypad";
+    protected static final String LOG_TAG = "Keypad";
 
     private final View keys[] = new View[9];
     private View keypad;
     private final int useds[];
     private final PuzzleView puzzleView;
+    private boolean USE_SUPPORT;
 
-    public Keypad(Context context, int useds[], PuzzleView puzzleView) {
+    public Keypad(Context context, int useds[], PuzzleView puzzleView, boolean bSupport) {
         super(context);
         this.useds = useds;
         this.puzzleView = puzzleView;
+        USE_SUPPORT = bSupport;
     }
 
     @Override
@@ -32,9 +35,11 @@ public class Keypad extends Dialog {
         setTitle(R.string.keypad_title);
         setContentView(R.layout.keypad);
         findByViews();
-        for (int element : useds) {
-            if (element != 0)
-                keys[element - 1].setVisibility(View.INVISIBLE);
+        if (USE_SUPPORT) {
+            for (int element : useds) {
+                if (element != 0)
+                    keys[element - 1].setVisibility(View.INVISIBLE);
+            }
         }
         setListeners();
     }
@@ -50,10 +55,11 @@ public class Keypad extends Dialog {
         keys[6] = findViewById(R.id.keypad_7);
         keys[7] = findViewById(R.id.keypad_8);
         keys[8] = findViewById(R.id.keypad_9);
+        Log.i(LOG_TAG, "Keypad::findByViews");
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
         int tile = 0;
         switch (keyCode) {
             case KeyEvent.KEYCODE_0:
@@ -68,8 +74,9 @@ public class Keypad extends Dialog {
             case KeyEvent.KEYCODE_8:     tile = 8; break;
             case KeyEvent.KEYCODE_9:     tile = 9; break;
             default:
-                return super.onKeyDown(keyCode, event);
+                return super.onKeyUp(keyCode, event);
         }
+        Log.i(LOG_TAG, "Keypad::onKeyDown: " + String.valueOf(keyCode));
         if (isValid(tile)) {
             returnResult(tile);
         }
@@ -95,11 +102,13 @@ public class Keypad extends Dialog {
             final int t = i + 1;
             keys[i].setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v) {
+                    Log.i(LOG_TAG, "Keypad::setListeners: Keys View inside");
                     returnResult(t);
                 }});
         }
         keypad.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
+                Log.i(LOG_TAG, "Keypad::setListeners: Keypad View inside");
                 returnResult(0);
             }});
     }

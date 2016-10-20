@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+
+import static android.view.MotionEvent.ACTION_BUTTON_RELEASE;
 
 /**
  * Created by sbin on 10/19/2016.
@@ -72,6 +75,7 @@ public class PuzzleView extends View{
 
         if (Prefs.getMusic(getContext())) {
             drawHints(canvas);
+            Log.i(LOG_TAG, "PuzzleView::Pref is checked and hint is on");
         }
     }
 
@@ -98,7 +102,7 @@ public class PuzzleView extends View{
 
     private void drawSelection(Canvas canvas) {
         // Draw the selection...
-        Log.d(LOG_TAG, "selRect=" + selRect);
+        Log.i(LOG_TAG, "PuzzleView::selRect=" + selRect);
         Paint selected = new Paint();
         selected.setColor(getResources().getColor(
                 R.color.puzzle_selected));
@@ -187,8 +191,49 @@ public class PuzzleView extends View{
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.i(LOG_TAG, "PuzzleView::onTouch: event="
+                + event);
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                Log.i(LOG_TAG, "PuzzleView::onTouch: x: "
+                        + (int)Math.round(event.getX())+ ", y: "+ (int) Math.round(event.getY())
+                        + ", selRect: " + selRect);
+                Log.i(LOG_TAG, "PuzzleView::onTouch: SelX: "
+                        + selX+ ", Sely: "+ selY
+                        + ", selRect: " + selRect);
+                select(event.getX(), event.getY());
+                game.showKeypadOrError(selX, selY, false);
+                break;
+            default:
+                return super.onTouchEvent(event);
+        }
+        return true;
+    }
+
+    // this select calculate where the touch happens (x, y) and translate into selX and selY
+    private void select(float x, float y) {
+        invalidate(selRect);
+        int totalX = getWidth();  //get total width pixel of this display
+        int totalY = getHeight(); // get total height pixel of this display
+        float width = (9f * x)/totalX; // x is the width pixel position where the touch happens
+        float height = (9f * y)/totalY;// y is the height pixel position where the touch happens
+        Log.i(LOG_TAG, "Before PuzzleView::select-float: Selx=" + selX + ", SelY"
+                + selY+ "SelRect: " + selRect);
+        selX = (int) width;
+        selY = (int) height;
+        getRect(selX,selY,selRect);
+
+        Log.i(LOG_TAG, "After PuzzleView::select-float: Selx=" + selX + ", SelY"
+                + selY+ "SelRect: " + selRect);
+        invalidate();
+    }
+
+    // This function is no use since the current android phone has no key pad..
+    // only touch is happeneing.
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.d(LOG_TAG, "onKeyDown: keycode=" + keyCode + ", event="
+        Log.i(LOG_TAG, "PuzzleView::onKeyDown: keycode=" + keyCode + ", event="
                 + event);
         switch(keyCode){
             case KeyEvent.KEYCODE_DPAD_UP:
@@ -217,7 +262,7 @@ public class PuzzleView extends View{
             case KeyEvent.KEYCODE_9:     setSelectedTile(9); break;
             case KeyEvent.KEYCODE_ENTER:
             case KeyEvent.KEYCODE_DPAD_CENTER:
-                game.showKeypadOrError(selX, selY);
+                game.showKeypadOrError(selX, selY, true);
                 break;
 
             default:
@@ -232,7 +277,7 @@ public class PuzzleView extends View{
         }
         else {
             // Number is not valid for this tile
-            Log.d(LOG_TAG, "setSelectedTile: invalid: " + tile);
+            Log.i(LOG_TAG, "setSelectedTile: invalid: " + tile);
 
             startAnimation(AnimationUtils.loadAnimation(game,
                     R.anim.shake));
