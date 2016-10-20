@@ -4,9 +4,11 @@ import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 /**
@@ -58,6 +60,10 @@ public class GameActivity extends AppCompatActivity {
         // If the activity is restarted, do a continue next time
         getIntent().putExtra(KEY_DIFFICULTY, DIFFICULTY_CONTINUE);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle("sbin's Sudoku Game");
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private int[] getPuzzle(int difficulty) {
@@ -237,5 +243,18 @@ public class GameActivity extends AppCompatActivity {
         //Save data for future continue.
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         preferences.edit().putString(PREF_PUZZLE, toPuzzleString(puzzle)).commit();
+    }
+
+    //Listener for setDisplayHomeAsUpEnabled(true) -- android.R.id.home
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 }

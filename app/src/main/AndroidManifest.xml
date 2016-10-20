@@ -32,8 +32,12 @@
             />
 
         <activity android:name=".GameActivity"
-            android:label="@string/game_title"
-            />
+            android:parentActivityName="sbin.com.sudoku_sbin.SudokuActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="sbin.com.sudoku_sbin.SudokuActivity"
+                />
+        </activity>
 
     </application>
 
