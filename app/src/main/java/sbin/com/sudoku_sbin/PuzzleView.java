@@ -76,6 +76,7 @@ public class PuzzleView extends View{
         if (Prefs.getHints(getContext())) {
             drawHints(canvas);
         }
+
     }
 
     private void drawHints(Canvas canvas) {
