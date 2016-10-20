@@ -73,9 +73,8 @@ public class PuzzleView extends View{
         drawNumbers(canvas);
         drawSelection(canvas);
 
-        if (Prefs.getMusic(getContext())) {
+        if (Prefs.getHints(getContext())) {
             drawHints(canvas);
-            Log.i(LOG_TAG, "PuzzleView::Pref is checked and hint is on");
         }
     }
 
