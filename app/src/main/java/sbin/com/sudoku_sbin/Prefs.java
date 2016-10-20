@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatCallback;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.view.ActionMode;
+import android.util.Log;
+import android.view.MenuItem;
 
 
 /**
@@ -16,36 +17,34 @@ import android.support.v7.view.ActionMode;
  */
 
 public class Prefs extends PreferenceActivity
-        implements AppCompatCallback {
-
-    private AppCompatDelegate delegate;
+{
+    private AppCompatDelegate mDelegate;
 
     // Option names and default values
     private static final String KEY_MUSIC = "music";
     private static final boolean OPT_MUSIC_DEF = true;
     private static final String KEY_HINTS = "hints";
     private static final boolean OPT_HINTS_DEF = true;
+    private static final String LOG_TAG = "Prefs";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
 
-/*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        delegate = AppCompatDelegate.create(this, this);
-        delegate.onCreate(savedInstanceState);
-        delegate.setSupportActionBar(toolbar);
-        delegate.getSupportActionBar().setDisplayShowTitleEnabled(true);
-        delegate.getSupportActionBar().setTitle(R.string.settings_title);
-        //delegate.getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
+        //Need to change AndroidManifest.xml to set this has actionbar Theme.AppCompat....Actionbar
+        getDelegate().installViewFactory();
+        getDelegate().onCreate(savedInstanceState);
+        if (getDelegate() == null) {
+            Log.i(LOG_TAG, "delegate: "+ mDelegate);
+            return;
+        }
 
-
-
-
-
-        /*AppCompatActivity appCompatActivity = getCallingActivity();
-        appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
-
+        ActionBar actionBar = getDelegate().getSupportActionBar();
+        if (actionBar == null) throw new AssertionError("Actionbar is null");
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setTitle(R.string.settings_title);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     public static boolean getMusic(Context context){
@@ -58,19 +57,23 @@ public class Prefs extends PreferenceActivity
         return preferences.getBoolean(KEY_HINTS, OPT_HINTS_DEF);
     }
 
-    @Override
-    public void onSupportActionModeStarted(ActionMode mode) {
-
+    private AppCompatDelegate getDelegate() {
+        if (mDelegate == null) {
+            mDelegate = AppCompatDelegate.create(this, null);
+        }
+        return mDelegate;
     }
 
+    //Listener for setDisplayHomeAsUpEnabled(true) -- android.R.id.home
     @Override
-    public void onSupportActionModeFinished(ActionMode mode) {
-
-    }
-
-    @Nullable
-    @Override
-    public ActionMode onWindowStartingSupportActionMode(ActionMode.Callback callback) {
-        return null;
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 }

@@ -19,9 +19,8 @@
         </activity>
 
         <activity android:name=".Prefs"
-            android:label="@string/settings_title"
-            android:parentActivityName="sbin.com.sudoku_sbin.SudokuActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme"
+            android:parentActivityName="sbin.com.sudoku_sbin.SudokuActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="sbin.com.sudoku_sbin.SudokuActivity"
